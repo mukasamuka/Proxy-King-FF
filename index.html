@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PROXY KING FF</title>
+<style>
+:root{--bg:#07080a;--panel:#111316;--line:#2b2f35;--silver:#d9dde3;--steel:#8d949e;--text:#eef0f3;--mute:#8a9099;--neon:#39ff14;--red:#ff4466}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{background:
+ radial-gradient(700px 420px at 50% -8%,rgba(200,208,220,.18),transparent 70%),
+ radial-gradient(500px 300px at 100% 100%,rgba(120,130,145,.12),transparent 70%),
+ repeating-linear-gradient(135deg,rgba(255,255,255,.015) 0 2px,transparent 2px 6px),var(--bg);
+ color:var(--text);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;display:flex;justify-content:center;padding:max(26px,env(safe-area-inset-top)) 18px 36px}
+main{width:100%;max-width:440px}
+.crown{display:block;margin:4px auto 0;width:84px;height:64px;filter:drop-shadow(0 0 14px rgba(220,226,235,.55)) drop-shadow(0 0 32px rgba(160,172,190,.35))}
+h1{text-align:center;font-family:Impact,"Arial Black",sans-serif;font-size:clamp(36px,12vw,52px);letter-spacing:3px;font-weight:900;margin:12px 0 4px;
+ background:linear-gradient(100deg,#6d737c 0%,#f4f6f9 25%,#9aa1ab 45%,#ffffff 60%,#7b828c 80%,#e3e7ec 100%);background-size:220% 100%;
+ -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+ filter:drop-shadow(0 0 14px rgba(210,218,230,.35));animation:shine 5s linear infinite}
+.sub{text-align:center;color:var(--mute);font-size:14px;margin-bottom:26px;letter-spacing:.4px}
+.card{position:relative;background:linear-gradient(160deg,#1a1d21,#0e1013 60%);border-radius:20px;padding:22px;
+ border:1px solid var(--line);box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 20px 50px rgba(0,0,0,.65),0 0 40px rgba(170,182,200,.08)}
+.card::before{content:"";position:absolute;inset:0;border-radius:20px;padding:1px;pointer-events:none;
+ background:linear-gradient(140deg,rgba(255,255,255,.55),rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(190,200,215,.4));
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.step{font-size:13px;color:var(--mute);margin-bottom:12px}
+button{font:inherit;cursor:pointer;border:0;border-radius:13px;width:100%;padding:15px;font-weight:700;font-size:16px;transition:transform .1s,box-shadow .25s,opacity .2s;position:relative;overflow:hidden}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:3px solid var(--silver);outline-offset:2px}
+#pick{background:rgba(255,255,255,.03);color:var(--text);border:2px dashed #4a5059}
+#pick:hover{border-color:var(--silver);box-shadow:0 0 18px rgba(200,208,220,.25)}
+#info{margin-top:14px;font-size:14px;color:var(--mute);word-break:break-all;min-height:20px}
+#info b{color:var(--silver)}
+#info.err{color:var(--red)}
+#go{margin-top:18px;background:linear-gradient(180deg,#f7f9fb 0%,#c4cad2 45%,#8e959f 100%);color:#0b0c0e;font-size:18px;letter-spacing:2px;
+ box-shadow:0 0 22px rgba(215,222,232,.35),0 1px 0 #fff inset}
+#go::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);animation:sweep 3.2s ease-in-out infinite}
+#go:hover:not(:disabled){box-shadow:0 0 34px rgba(230,236,245,.6),0 1px 0 #fff inset}
+#go:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+#go:disabled::after{display:none}
+#go.on{background:linear-gradient(180deg,#2a2e34,#17191d);color:var(--silver);border:1px solid #444a52;box-shadow:none}
+#go.on::after{display:none}
+.status{margin-top:24px;display:flex;align-items:center;justify-content:center;gap:12px;min-height:46px;font-size:21px;font-weight:700;letter-spacing:.6px;
+ border-radius:14px;background:rgba(0,0,0,.35);border:1px solid #23272c;padding:8px}
+.dot{width:20px;height:20px;border-radius:50%;background:#444a52;flex:none}
+.status.idle{color:var(--mute);font-size:16px}
+.status.busy{color:var(--silver)}
+.status.busy .dot{background:var(--silver);box-shadow:0 0 12px var(--silver);animation:pulse .7s ease-in-out infinite}
+.status.online{color:var(--neon);text-shadow:0 0 10px var(--neon);border-color:rgba(57,255,20,.35);box-shadow:0 0 24px rgba(57,255,20,.15)}
+.status.online .dot{background:var(--neon);box-shadow:0 0 8px var(--neon),0 0 20px var(--neon),0 0 42px var(--neon);animation:pulse 1.6s ease-in-out infinite}
+.status.offline{color:var(--red)}
+.status.offline .dot{background:var(--red);box-shadow:0 0 10px var(--red)}
+#msg{text-align:center;font-size:13px;color:var(--mute);margin-top:10px;min-height:18px;word-break:break-all}
+#open{display:block;margin-top:18px;text-align:center;text-decoration:none;color:var(--silver);font-weight:700;font-size:16px;letter-spacing:1px;padding:14px;border-radius:13px;
+ background:linear-gradient(180deg,#23272c,#121417);border:1px solid #505760;box-shadow:0 0 18px rgba(200,208,220,.15);transition:transform .1s,box-shadow .25s}
+#open:hover{box-shadow:0 0 28px rgba(230,236,245,.4)}
+#open:active{transform:scale(.97)}
+#open:focus-visible{outline:3px solid var(--silver);outline-offset:2px}
+@keyframes pulse{50%{opacity:.55;transform:scale(.88)}}
+@keyframes shine{to{background-position:-220% 0}}
+@keyframes sweep{0%,55%{left:-70%}100%{left:130%}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+<main>
+  <svg class="crown" viewBox="0 0 74 56" aria-hidden="true">
+    <defs><linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#9ea5af"/><stop offset="1" stop-color="#e4e8ed"/></linearGradient></defs>
+    <path d="M6 46 2 12l18 16L37 4l17 24L72 12l-4 34z" fill="url(#m)"/>
+    <rect x="6" y="48" width="62" height="6" rx="2" fill="#7c838d"/>
+    <circle cx="37" cy="36" r="4" fill="#07080a"/><circle cx="2" cy="12" r="2.5" fill="#fff"/><circle cx="72" cy="12" r="2.5" fill="#fff"/><circle cx="37" cy="4" r="2.5" fill="#fff"/>
+  </svg>
+  <h1>PROXY KING FF</h1>
+  <p class="sub">Selecione o arquivo e ative a conexão</p>
+
+  <section class="card">
+    <p class="step">Passo 1: arquivo .json da pasta do jogo</p>
+    <button id="pick" type="button">Selecionar arquivo .json</button>
+    <input id="file" type="file" accept=".json,application/json,text/plain,*/*">
+    <p id="info">Nenhum arquivo selecionado.</p>
+
+    <button id="go" type="button" disabled>ATIVAR HS PEITO</button>
+    <div id="status" class="status idle" role="status" aria-live="polite"><span class="dot"></span><span id="label">Offline</span></div>
+    <p id="msg"></p>
+    <a id="open" href="intent://#Intent;scheme=freefire;package=com.dts.freefireth;end">Abrir FF</a>
+  </section>
+</main>
+
+<script>
+(function(){
+  var fileInput=document.getElementById('file'),pick=document.getElementById('pick'),
+      info=document.getElementById('info'),go=document.getElementById('go'),
+      status=document.getElementById('status'),label=document.getElementById('label'),msg=document.getElementById('msg');
+  var addr=null,active=false,ctrl=null;
+
+  function setStatus(cls,text,m){status.className='status '+cls;label.textContent=text;msg.textContent=m||'';}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]});}
+
+  function reset(){
+    active=false;if(ctrl)ctrl.abort();
+    go.textContent='ATIVAR HS PEITO';go.classList.remove('on');
+    setStatus('idle','Offline','');
+  }
+
+  pick.addEventListener('click',function(){fileInput.click();});
+
+  fileInput.addEventListener('change',function(){
+    var f=fileInput.files&&fileInput.files[0];
+    reset();addr=null;go.disabled=true;info.classList.remove('err');
+    if(!f){info.textContent='Nenhum arquivo selecionado.';return;}
+    var r=new FileReader();
+    r.onerror=function(){info.classList.add('err');info.textContent='Não foi possível ler o arquivo.';};
+    r.onload=function(){
+      try{
+        var text=String(r.result).replace(/^\uFEFF/,'');
+        var data=JSON.parse(text);
+        if(!data||typeof data.verAddr!=='string')throw new Error('O arquivo não tem o campo "verAddr".');
+        var u=new URL(data.verAddr);
+        if(u.protocol!=='http:'&&u.protocol!=='https:')throw new Error('Endereço inválido em "verAddr".');
+        addr=u.href;
+        info.innerHTML='<b>'+esc(f.name)+'</b><br>Endereço: '+esc(addr);
+        go.disabled=false;
+      }catch(e){
+        info.classList.add('err');
+        info.textContent=(e instanceof SyntaxError)?'Arquivo inválido: não é um JSON válido.':e.message;
+      }
+    };
+    r.readAsText(f);
+  });
+
+  function call(path,timeoutMs){
+    var c=new AbortController(),t=setTimeout(function(){c.abort();},timeoutMs||7000);
+    return fetch(addr+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:path==='activate'?'ATIVAR':'DESATIVAR'}),cache:'no-store',signal:c.signal})
+      .then(function(r){clearTimeout(t);if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+      .catch(function(e){clearTimeout(t);throw e;});
+  }
+
+  go.addEventListener('click',function(){
+    if(!addr)return;
+    if(active){
+      active=false;if(ctrl)ctrl.abort();
+      go.textContent='ATIVAR HS PEITO';go.classList.remove('on');
+      setStatus('idle','Offline','');
+      call('deactivate',4000).catch(function(){});
+      return;
+    }
+    active=true;
+    var token={};ctrl={abort:function(){token.dead=true;}};var mine=ctrl;
+    go.textContent='DESATIVAR HS PEITO';go.classList.add('on');
+    setStatus('busy','Conectando...','Testando '+addr);
+    call('activate').then(function(res){
+      if(!active||mine!==ctrl)return;
+      if(!res||res.ok!==true)throw new Error('resposta inválida');
+      setStatus('online','Online','Conectado a '+addr);
+    }).catch(function(){
+      if(!active||mine!==ctrl)return;
+      active=false;go.textContent='ATIVAR HS PEITO';go.classList.remove('on');
+      setStatus('offline','Offline','Sem resposta do servidor. Verifique sua internet e tente de novo.');
+    });
+  });
+})();
+</script>
+</body>
+</html>
